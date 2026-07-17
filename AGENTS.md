@@ -2,52 +2,121 @@
 
 ## 项目定位
 
-本项目是一个可扩展的多模态 Agent 平台骨架。平台需要支持多个可配置 Agent、文本/文档/图片/音频/视频输入、Agent 工作流、模型 Provider、工具注册、知识库、任务运行记录、节点日志、人工审核与结构化输出。
+本项目是 **Star.X 多模态智能体工作台**，面向公司内部使用，Web 与飞书是两个入口。
 
-当前第一个示例 Agent 是「高阶影视人才智能评测与项目匹配 Agent」。平台核心代码不得与单一影视业务强耦合；具体业务规则应通过 Agent 配置、工作流配置、知识库、输入 Schema、输出 Schema、工具绑定和模型绑定接入，不得硬编码到页面组件或平台核心执行器中。
+平台目标是支持：
+
+- 多个可配置 Agent
+- 文本、文档、图片、音频、视频输入
+- Agent Registry
+- Workflow Engine
+- Model Gateway / Model Provider
+- Tool Registry
+- Knowledge Base
+- Task Runtime 与节点日志
+- 人工审核
+- 结构化输出
+- 飞书免登、机器人、卡片、通知和多维表格同步
+
+当前第一个示例 Agent 是「高阶影视人才智能评测与项目匹配 Agent」。平台核心代码不得与单一影视业务强耦合；具体业务规则应通过 Agent 配置、工作流、知识库、输入输出 Schema、工具绑定和模型绑定接入。
 
 ## 当前技术栈
 
-- 前端：React 19、Vite 7、TypeScript、Tailwind CSS、lucide-react。
+- 前端：React 19、Vite 7、TypeScript、Tailwind CSS。
 - 后端：NestJS 10、TypeScript、Node.js。
-- 数据：当前 MVP 使用本地 JSON 运行时数据；V1.1 旧流程预留 Feishu Bitable/LLM 配置。
 - 包管理：npm + `package-lock.json`。
+- 当前持久化：本地 JSON 运行时数据。
+- 生产规划：PostgreSQL、Redis/BullMQ、对象存储、Docker Compose。
 
 ## 每次开始开发
 
-1. 先执行 `git status` 和 `git branch --show-current`。
-2. 只优先读取 `AGENTS.md` 与 `docs/STATUS.md`。
-3. 根据 `docs/STATUS.md` 判断当前任务和下一步。
-4. 只检查与当前任务直接相关的目录和代码。
-5. 不要默认读取 `README.md`、`docs/PLANS.md`、大型日志、媒体文件、构建产物、依赖目录或运行时数据。
-6. 涉及架构规划、新大型模块时再读 `docs/PLANS.md`。
-7. 涉及安装、启动、构建、部署或环境故障时再读 `README.md`。
+1. 执行：
 
-## 开发约束
+```bash
+git status
+git branch --show-current
+git log -5 --oneline
+```
 
-1. 不要重复实现已经存在的功能。
-2. 不得擅自删除已有业务功能或大范围重构。
-3. 业务规则不得散落在前端页面中。
-4. 数据库结构变更必须保留 migration；本地运行数据不通过 Git 同步。
-5. 不得提交 API Key、Token、密码、真实简历、隐私文件或本地上传媒体。
-6. 不得在代码中硬编码密钥。
-7. 小修改只运行类型检查和相关测试。
-8. 只有涉及全局架构、依赖、构建或发布时才运行完整构建。
-9. 出现错误时，说明是历史问题还是本次修改引入的问题。
+2. 优先读取：
 
-## Codex 任务结束时必须
+```text
+AGENTS.md
+PROJECT_MEMORY.md
+docs/STATUS.md
+```
 
-1. 简短总结修改内容。
-2. 更新 `docs/STATUS.md`，只保留当前有效状态。
-3. 记录下一步最多 5 项任务和仍存在的阻塞。
-4. 执行 `git status`。
-5. 给出建议的 Git commit message。
-6. 不自动 commit 或 push，除非用户明确要求。
+3. 只有涉及对应主题时再读取：
 
-## 常用接力指令模板
+- 产品范围：`docs/PRODUCT_PLAN.md`
+- 架构调整：`docs/ARCHITECTURE.md`
+- 路线规划：`docs/ROADMAP.md`
+- 飞书接入：`docs/FEISHU_INTEGRATION.md`
+- 验收：`docs/MVP_ACCEPTANCE.md`
+- 历史决定：`docs/DECISIONS.md`
+- 安装、运行、构建和部署：`README.md`
 
-普通接力开发：先读取根目录 `AGENTS.md` 和 `docs/STATUS.md`，执行 `git status` 与 `git branch --show-current`。根据 STATUS 继续当前未完成任务，只检查与本次任务直接相关的代码；除非涉及架构规划，否则不读 `docs/PLANS.md`；除非涉及安装、启动、构建或部署，否则不读 `README.md`。完成后运行相关检查，更新 `docs/STATUS.md`，并给出建议 commit message。
+不要默认扫描整个仓库，不读取 `node_modules`、构建产物、大型日志、媒体文件、运行时数据和真实隐私资料。
 
-新功能开发：先读取 `AGENTS.md`、`docs/STATUS.md`，必要时读取 `docs/PLANS.md`。给出不超过 8 行的实施计划后直接开发，确保新功能通过平台现有接口扩展，不把具体业务规则写入平台核心。
+## 当前唯一优先任务
 
-故障排查：先读取 `AGENTS.md` 和 `docs/STATUS.md`，根据报错定位相关文件，不默认扫描整个项目。优先复现问题，记录最小报错信息，修复后运行最小范围验证，且不输出完整密钥、Token、连接串或个人数据。
+完成 **Task Runtime + Model Gateway 最小闭环**，并只迁移“候选人简历结构化分析”。具体实施见：
+
+```text
+prompts/CODEX_PHASE_1.md
+```
+
+该阶段完成前，不主动扩展完整飞书联动、拖拽工作流、新 Agent 大量页面、PostgreSQL、Redis、微服务或大范围重构。
+
+## 架构边界
+
+- `core/`：通用平台能力，不含具体影视业务规则。
+- Agent/业务模块：具体 Agent 逻辑。
+- `integrations/`：飞书、搜索、对象存储等外部系统适配。
+- 业务代码不得直接调用具体模型 SDK，必须通过 Model Gateway。
+- 业务代码不得散落调用飞书 API，必须通过 Feishu Integration 或 Tool。
+- 运行时持久化必须通过 Repository 接口，方便未来从 JSON 替换为数据库。
+- 不把业务规则写进前端页面组件或平台核心执行器。
+
+## 安全要求
+
+禁止读取、提交或输出：
+
+- `.env` 中的完整密钥
+- API Key、Token、App Secret、数据库密码
+- 真实候选人简历和客户资料
+- 本地上传媒体和运行时数据库
+
+日志默认不保存完整简历原文和模型原始敏感输入。`.env` 只保存在每台电脑本地，不上传 GitHub。
+
+## Git 规则
+
+- 修改前检查远程状态。
+- 有未提交修改时，不擅自 pull、reset、checkout 或覆盖。
+- 禁止 `push --force`、`reset --hard`、`clean -fd`。
+- 大功能使用独立分支，避免两台电脑同时直接修改 main。
+- 未经明确要求，不自动 commit 或 push。
+
+## 开发规则
+
+- 修改前确认功能是否已经存在。
+- 不重复实现，不删除无关功能。
+- 只读取当前任务相关文件。
+- 先做最小范围、可验证修改。
+- 小任务只运行相关测试和类型检查。
+- 只有涉及全局架构、依赖、构建或发布时才运行完整构建。
+- 发生历史错误时，明确说明不是本次引入。
+
+## 任务结束
+
+必须输出：
+
+1. 本次完成
+2. 修改文件
+3. 验证结果
+4. Git 状态
+5. 遗留问题
+6. 下一步最多 3 项
+7. 建议 commit message
+
+同时精简更新 `docs/STATUS.md`，不写聊天流水账，不粘贴长日志或完整代码。
