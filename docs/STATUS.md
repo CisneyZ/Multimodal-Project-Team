@@ -1,8 +1,8 @@
 # 当前开发状态
 
-更新时间：2026-07-17 20:18（Asia/Shanghai）
+更新时间：2026-07-17 20:25（Asia/Shanghai）
 当前分支：main
-当前阶段：Talent Agent MVP 可运行；本机轻量化 Git 接力整理已完成，远程仓库已配置但当前网络推送失败。
+当前阶段：Talent Agent MVP 可运行；本机轻量化 Git 接力整理已完成，并已推送到远程仓库。
 
 ## 当前目标
 
@@ -20,13 +20,13 @@
 
 ## 正在进行
 
-- 本机首次提交已完成；`origin` 已配置为 `https://github.com/CisneyZ/Multimodal-Project-Team.git`，但本机访问 GitHub 出现连接被重置，尚未 push。
+- 本机首次提交已完成；`origin` 已配置为 `https://github.com/CisneyZ/Multimodal-Project-Team.git`，并已推送 `main`。
 
 ## 下一步
 
-1. 用户创建私有 GitHub/Gitee/GitLab 仓库。
-2. 配置 `origin` remote 并执行首次 commit/push。
-3. 在第二台电脑 clone、复制 `.env.example` 为 `.env` 并本地启动验证。
+1. 在第二台电脑 clone 远程仓库。
+2. 第二台电脑执行 `npm install`，复制 `.env.example` 为 `.env` 并本地启动验证。
+3. 两台电脑开始工作前都执行 `git pull --rebase`。
 4. 后续把 Talent Agent 业务规则进一步配置化，减少页面与平台核心耦合。
 5. 需要生产化时再引入数据库 migration 和任务队列。
 
@@ -34,7 +34,7 @@
 
 - 当前 `.env` 存在本地真实密钥，已被 `.gitignore` 忽略，不应提交。
 - `交付文档/` 中存在旧交付包和环境文件，已被 `.gitignore` 忽略；如曾进入 Git 历史，需要另行清理历史。
-- 当前仓库已配置 remote；push 仍需在 GitHub 网络可用、账号鉴权可用后执行。
+- 当前电脑 GitHub 访问需要走本机代理 `127.0.0.1:7890`；已写入本仓库本地 Git 配置，不会提交到仓库。
 
 ## 关键决定
 
@@ -45,12 +45,12 @@
 
 ## 最近修改
 
-本次整理了轻量接力文档、Git 忽略规则和安全的环境变量示例，初始化项目级 Git 仓库，完成本机首次提交并配置 GitHub remote；前后端 TypeScript 检查通过。
+本次整理了轻量接力文档、Git 忽略规则和安全的环境变量示例，初始化项目级 Git 仓库，完成本机首次提交，合并远程初始 README，并推送到 GitHub；前后端 TypeScript 检查通过。
 
 ## 推荐的下一条 Codex 指令
 
-在 GitHub 网络可用后执行 `git push -u origin main`。
+在第二台电脑 clone 仓库，执行 `npm install`、复制 `.env.example` 为 `.env`，然后启动验证。
 
 ## 建议 commit message
 
-chore: prepare lightweight git handoff workflow
+docs: update handoff status after first push
