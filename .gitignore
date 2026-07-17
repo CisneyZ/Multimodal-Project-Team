@@ -1,0 +1,92 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Build outputs
+dist/
+*/dist/
+build/
+*/build/
+.next/
+coverage/
+*.lcov
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+!.env.example
+
+# Logs and process files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.pid
+*.pid.lock
+pids
+
+# Runtime data and generated artifacts
+.runtime/
+server/data/workflow-hub/
+exports/
+uploads/
+storage/
+tmp/
+temp/
+.tmp/
+.cache/
+.vite/
+.playwright-cli/
+.npm_cache/
+reports/
+local-reports/
+vector-index/
+indexes/
+parsed-text/
+screenshots/
+
+# Local databases
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.sqlite-wal
+*.sqlite-shm
+
+# Local Codex / agent caches
+.agent/
+.agents/
+.codex_manual/
+
+# Delivery bundles and local document exports
+交付文档/
+
+# TypeScript / lint caches
+*.tsbuildinfo
+.eslintcache
+.stylelintcache
+
+# IDE and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Keep reproducible npm lockfile; ignore other package-manager locks not used here.
+yarn.lock
+pnpm-lock.yaml
