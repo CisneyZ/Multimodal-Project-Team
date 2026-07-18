@@ -1,4 +1,4 @@
-# Star.X 项目长期记忆
+# MPT平台项目长期记忆
 
 版本：2026-07-17
 
@@ -6,8 +6,10 @@
 
 ## 一、项目名称与定位
 
-中文名：**Star.X 多模态智能体工作台**  
-英文名：**Star.X Multimodal Agent Workbench**
+中文正式名称：**MPT平台**
+英文正式名称：**MPT Platform**
+英文全称：**Multimodal Project Team Platform**
+项目简称：**MPT**
 
 这是公司内部使用的可扩展多模态 Agent 平台。影视人才评测只是第一个示例 Agent，不允许平台核心与该单一业务强耦合。
 

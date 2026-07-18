@@ -5,8 +5,8 @@
 建议把现有仓库 clone 到新的项目文件夹，再把本记忆包中的文档复制到仓库根目录。
 
 ```bash
-git clone https://github.com/CisneyZ/Multimodal-Project-Team.git StarX-Multimodal-Agent-Platform
-cd StarX-Multimodal-Agent-Platform
+git clone https://github.com/CisneyZ/Multimodal-Project-Team.git mpt-platform
+cd mpt-platform
 ```
 
 如果本机已经有完整代码，也可以复制整个项目目录，但应保留 `.git/`，避免丢失历史。

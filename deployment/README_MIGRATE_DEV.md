@@ -1,4 +1,4 @@
-# Star.X 源码开发迁移包说明
+# MPT Platform 源码开发迁移包说明
 
 这个包用于把当前项目迁移到另一台电脑继续开发，同时保留当前可运行的 `dist` 构建产物。
 
@@ -11,13 +11,13 @@
 ## 推荐解压位置
 
 ```powershell
-D:\starx-dev
+D:\mpt-platform-dev
 ```
 
 ## 首次检查
 
 ```powershell
-cd "D:\starx-dev"
+cd "D:\mpt-platform-dev"
 node -v
 npm.cmd -v
 ```
@@ -35,7 +35,7 @@ npm.cmd ci
 ## Windows 构建
 
 ```powershell
-cd "D:\starx-dev"
+cd "D:\mpt-platform-dev"
 Set-ExecutionPolicy -Scope Process Bypass
 .\deployment\build-windows.ps1
 ```
@@ -43,7 +43,7 @@ Set-ExecutionPolicy -Scope Process Bypass
 ## 生产方式启动
 
 ```powershell
-cd "D:\starx-dev"
+cd "D:\mpt-platform-dev"
 Set-ExecutionPolicy -Scope Process Bypass
 .\deployment\start-prod-windows.ps1
 ```
@@ -69,7 +69,7 @@ admin123
 第一个窗口启动后端：
 
 ```powershell
-cd "D:\starx-dev"
+cd "D:\mpt-platform-dev"
 Set-ExecutionPolicy -Scope Process Bypass
 .\deployment\start-dev-server.ps1
 ```
@@ -77,7 +77,7 @@ Set-ExecutionPolicy -Scope Process Bypass
 第二个窗口启动前端：
 
 ```powershell
-cd "D:\starx-dev"
+cd "D:\mpt-platform-dev"
 Set-ExecutionPolicy -Scope Process Bypass
 .\deployment\start-dev-client.ps1
 ```

@@ -1,6 +1,6 @@
-# Star.X Agent Platform MVP
+# MPT Platform MVP
 
-本仓库是一个 React + Vite + NestJS 的轻量化 Agent 平台项目。当前可运行示例为「高阶影视人才智能评测与项目匹配 Agent」，入口集成在后台中控内，用于演示项目资料导入、简历结构化、项目匹配、动态测评、人工复核、报告生成与人才库闭环。
+本仓库是一个 React + Vite + NestJS 的轻量化 Agent 平台项目。MPT平台（Multimodal Project Team Platform）当前可运行示例为「高阶影视人才智能评测与项目匹配 Agent」，入口集成在后台中控内，用于演示项目资料导入、简历结构化、项目匹配、动态测评、人工复核、报告生成与人才库闭环。
 
 ## 当前技术栈
 
@@ -122,7 +122,7 @@ git push -u origin main
 
 ```powershell
 git clone <your-private-repo-url>
-cd starx-dev
+cd mpt-platform-dev
 npm install
 Copy-Item .env.example .env
 npm run build:prod

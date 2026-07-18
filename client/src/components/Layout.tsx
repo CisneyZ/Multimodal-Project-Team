@@ -50,12 +50,12 @@ const adminNavItems = [
 const BrandMark = ({ compact = false }: { compact?: boolean }) => (
   <Link to="/" className="flex min-w-0 items-center gap-3">
     <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[18px] bg-[#007aff] text-[13px] font-semibold tracking-[-0.02em] text-white shadow-[0_12px_28px_rgba(0,122,255,0.20)]">
-      SX
+      MPT
     </span>
     {!compact && (
       <span className="min-w-0">
         <span className="block truncate text-[15px] font-semibold tracking-[-0.02em] text-white">
-          Star.X Talent OS
+          MPT Platform
         </span>
         <span className="mt-0.5 block text-[11px] font-medium uppercase tracking-[0.18em] text-white/45">
           Assessment Console
@@ -89,7 +89,7 @@ const Layout = () => {
     if (location.pathname.startsWith('/admin')) return '评分与数据管理';
     if (location.pathname.startsWith('/review')) return '主观题人工复核';
     if (location.pathname.startsWith('/onboarding')) return '新人学习路径';
-    return 'Star.X Assessment';
+    return 'MPT Platform';
   })();
 
   if (!isManagementArea) {
@@ -143,7 +143,7 @@ const Layout = () => {
       <nav className="fixed left-0 top-0 z-40 hidden h-full w-[96px] flex-col border-r border-[#e5e5ea] bg-[#fbfbfd]/92 px-3 py-5 backdrop-blur-2xl lg:flex">
         <div className="mb-8 flex flex-col items-center">
           <BrandMark compact />
-          <p className="mt-3 text-center text-[11px] font-semibold tracking-[-0.02em] text-[#1d1d1f]">Star.X</p>
+          <p className="mt-3 text-center text-[11px] font-semibold tracking-[-0.02em] text-[#1d1d1f]">MPT</p>
           <p className="mt-0.5 text-center text-[9px] font-semibold uppercase tracking-[0.16em] text-[#86868b]">
             Console
           </p>

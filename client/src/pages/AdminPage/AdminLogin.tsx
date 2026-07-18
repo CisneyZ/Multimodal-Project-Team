@@ -59,7 +59,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
               <ShieldCheck className="h-5 w-5" />
             </div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#65c7ff]">
-              Star.X Console
+              MPT Platform
             </p>
             <h1 className="mt-2 text-2xl font-black text-white">管理登录</h1>
             <p className="mt-2 text-sm leading-6 text-white/52">
