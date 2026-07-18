@@ -6,7 +6,7 @@
 
 ## 当前产品定位
 
-项目正式定位为 **Star.X 多模态智能体工作台**：
+项目正式定位为 **MPT平台**：
 
 - Web 管理后台 + 飞书办公入口
 - 面向公司内部使用
@@ -90,5 +90,5 @@ feature/task-model-gateway
 ## 建议 commit message
 
 ```text
-docs: install Star.X project memory and platform plan
+docs: install MPT platform project memory and platform plan
 ```
