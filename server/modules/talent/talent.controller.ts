@@ -1,5 +1,6 @@
 ﻿import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { TalentService } from './talent.service';
+import { phase1AnalysisRequestSchema, type Phase1AnalysisRequestDto } from './talent.dto';
 
 @Controller('api/talent')
 export class TalentController {
@@ -31,6 +32,12 @@ export class TalentController {
 
   @Post('candidates/:candidateId/analyze')
   analyzeCandidate(@Param('candidateId') candidateId: string) { return this.service.analyzeCandidate(candidateId); }
+
+  @Post('candidates/:candidateId/phase1-analyses')
+  analyzePhase1(@Param('candidateId') candidateId: string, @Body() body: Phase1AnalysisRequestDto) { return this.service.analyzePhase1(candidateId, phase1AnalysisRequestSchema.parse({ ...body, candidateId })); }
+
+  @Get('candidates/:candidateId/phase1-analyses')
+  listPhase1Analyses(@Param('candidateId') candidateId: string) { return this.service.listPhase1Analyses(candidateId); }
 
   @Post('candidates/:candidateId/match')
   matchCandidate(@Param('candidateId') candidateId: string) { return this.service.matchCandidate(candidateId); }

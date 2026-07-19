@@ -1,4 +1,6 @@
-﻿export type TalentProjectStatus = 'draft' | 'pending_confirm' | 'active' | 'disabled';
+﻿import type { ManualCorrection, StructuredTalentProfile, TalentAnalysis } from './talent-rules';
+
+export type TalentProjectStatus = 'draft' | 'pending_confirm' | 'active' | 'disabled';
 export type TalentRuleType = 'required' | 'bonus' | 'elimination';
 export type TalentCandidateStatus =
   | 'pending_analysis'
@@ -195,6 +197,18 @@ export interface TalentActivity {
   createdAt: string;
 }
 
+export interface TalentPhase1AnalysisRecord {
+  id: string;
+  candidateId: string;
+  analysisMode: 'AI_ASSISTED' | 'RULE_FALLBACK' | 'MANUAL_CORRECTED';
+  ruleVersion: 'MPT_RULES_v0.4';
+  extractedProfile: StructuredTalentProfile;
+  appliedCorrections: ManualCorrection[];
+  result: TalentAnalysis;
+  createdAt: string;
+  generatedAt: string;
+}
+
 export interface TalentDataStore {
   projects: TalentProject[];
   projectDocuments: TalentProjectDocument[];
@@ -208,6 +222,7 @@ export interface TalentDataStore {
   answers: TalentAnswer[];
   reports: TalentEvaluationReport[];
   activities: TalentActivity[];
+  phase1Analyses?: TalentPhase1AnalysisRecord[];
 }
 
 export interface TalentProjectDetail extends TalentProject {
@@ -222,6 +237,7 @@ export interface TalentCandidateDetail extends TalentCandidate {
   matches: TalentProjectMatch[];
   assessments: TalentAssessment[];
   reports: TalentEvaluationReport[];
+  phase1Analyses?: TalentPhase1AnalysisRecord[];
 }
 
 export interface TalentAssessmentDetail extends TalentAssessment {

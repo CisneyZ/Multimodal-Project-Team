@@ -30,6 +30,7 @@ export interface TalentAnswer { id: string; questionId: string; candidateId: str
 export interface TalentAssessmentDetail extends TalentAssessment { project: TalentProject | null; candidate: TalentCandidate | null; questions: TalentQuestion[]; }
 export interface TalentReport { id: string; candidateId: string; recommendedProjectId: string; secondProjectId: string | null; recommendedRole: string; finalScore: number; resumeMatchScore: number; assessmentScore: number; projectRuleFit: number; talentType: string; talentLevel: string; strengths: string[]; weaknesses: string[]; risks: string[]; eliminationCheck: string[]; recommendation: string; reviewerComment: string; aiReasoning: string[]; printableMarkdown: string; createdAt: string; }
 export interface TalentDashboard { projectCount: number; activeProjectCount: number; candidateCount: number; pendingAssessment: number; pendingReview: number; recommended: number; eliminated: number; distribution: Array<{ projectId: string; projectName: string; count: number }>; recentActivities: Array<{ id: string; type: string; message: string; createdAt: string }>; }
+export interface TalentPhase1Analysis { id: string; candidateId: string; analysisMode: 'AI_ASSISTED' | 'RULE_FALLBACK' | 'MANUAL_CORRECTED'; ruleVersion: 'MPT_RULES_v0.4'; input: Record<string, unknown>; result: Record<string, unknown>; createdAt: string; }
 
 const BASE = '/api/talent';
 const req = async <T>(url: string, method = 'GET', data?: unknown): Promise<T> => (await axiosForBackend({ url: `${BASE}${url}`, method, data })).data;
@@ -44,6 +45,8 @@ export const talentApi = {
   candidates: () => req<TalentCandidate[]>('/candidates'),
   createCandidate: (data: Partial<TalentCandidate>) => req<TalentCandidate>('/candidates', 'POST', data),
   analyzeCandidate: (id: string) => req<TalentCandidate>(`/candidates/${id}/analyze`, 'POST'),
+  analyzePhase1: (id: string, profile: Record<string, unknown> = {}) => req<TalentPhase1Analysis>(`/candidates/${id}/phase1-analyses`, 'POST', profile),
+  phase1Analyses: (id: string) => req<TalentPhase1Analysis[]>(`/candidates/${id}/phase1-analyses`),
   matchCandidate: (id: string) => req<TalentCandidate>(`/candidates/${id}/match`, 'POST'),
   createAssessment: (candidateId: string, projectId?: string) => req<TalentAssessmentDetail>(`/candidates/${candidateId}/assessments`, 'POST', { projectId }),
   addToPool: (candidateId: string) => req<TalentCandidate>(`/candidates/${candidateId}/add-to-pool`, 'POST'),

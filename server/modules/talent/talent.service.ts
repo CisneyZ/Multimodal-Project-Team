@@ -16,7 +16,10 @@ import type {
   TalentProjectRule,
   TalentQuestion,
   TalentQuestionType,
+  TalentPhase1AnalysisRecord,
 } from './talent.types';
+import { analyzeTalentProfile, type ManualCorrection, type StructuredTalentProfile } from './talent-rules';
+import type { Phase1AnalysisRequestDto } from './talent.dto';
 
 const now = () => new Date().toISOString();
 const uid = (prefix: string) => `${prefix}-${randomUUID().slice(0, 8)}`;
@@ -92,6 +95,17 @@ export class TalentService {
     this.activity(d, `简历结构化分析：${c.name}`); await this.saveData(); return this.candidateDetail(c, d);
   }
 
+  async analyzePhase1(candidateId: string, body: Phase1AnalysisRequestDto) {
+    const d = await this.getData(); const candidate = this.candidate(d, candidateId);
+    const legacy = d.profiles.find((p) => p.candidateId === candidateId) ?? this.parseResume(candidate.resumeText, candidateId);
+    const input: StructuredTalentProfile = { name: body.extractedProfile.name, education: body.extractedProfile.education, school: body.extractedProfile.school, academy: body.extractedProfile.academy, major: body.extractedProfile.major, workYears: body.extractedProfile.workYears, currentRole: body.extractedProfile.currentRole, filmAnalysisEvidence: body.extractedProfile.filmAnalysisEvidence, editingEvidence: body.extractedProfile.editingEvidence, visualLanguageEvidence: body.extractedProfile.visualLanguageEvidence, writingEvidence: body.extractedProfile.writingEvidence, annotationEvidence: body.extractedProfile.annotationEvidence, qualityReviewEvidence: body.extractedProfile.qualityReviewEvidence, creativeExperience: body.extractedProfile.creativeExperience, works: body.extractedProfile.works, fullTimeStatus: body.extractedProfile.fullTimeStatus, availableMonths: body.extractedProfile.availableMonths, availableDate: body.extractedProfile.availableDate, sources: body.extractedProfile.sources, manuallyCorrected: body.manualCorrections.length > 0 };
+    for (const correction of body.manualCorrections) { const key = correction.fieldPath; const old = input[key]; if (JSON.stringify(old) !== JSON.stringify(correction.oldValue)) throw new Error(`人工修正原值不一致：${key}`); if (key === 'fullTimeStatus') input.fullTimeStatus = correction.newValue as boolean | null; else if (key === 'availableMonths') input.availableMonths = correction.newValue as number | null; else if (key === 'availableDate') input.availableDate = correction.newValue as string | null; else input[key] = correction.newValue as string[]; }
+    const result = analyzeTalentProfile(input); const createdAt = now(); const record: TalentPhase1AnalysisRecord = { id: uid('phase1-analysis'), candidateId, analysisMode: input.manuallyCorrected ? 'MANUAL_CORRECTED' : body.analysisMode, ruleVersion: 'MPT_RULES_v0.4', extractedProfile: body.extractedProfile as StructuredTalentProfile, appliedCorrections: body.manualCorrections as ManualCorrection[], result, createdAt, generatedAt: result.report.generatedAt };
+    (d.phase1Analyses ||= []).unshift(record); candidate.status = result.talentLevel === 'REJECT' ? 'eliminated' : result.talentLevel === 'MANUAL_REVIEW' ? 'pending_review' : 'screened'; candidate.updatedAt = now(); this.activity(d, `Phase 1 人才规则分析：${candidate.name}`); await this.saveData(); return record;
+  }
+
+  async listPhase1Analyses(candidateId: string) { const d = await this.getData(); this.candidate(d, candidateId); return (d.phase1Analyses || []).filter((x) => x.candidateId === candidateId).sort((a, b) => b.createdAt.localeCompare(a.createdAt)); }
+
   async matchCandidate(candidateId: string) {
     const d = await this.getData(); const c = this.candidate(d, candidateId); let profile = d.profiles.find((p) => p.candidateId === c.id);
     if (!profile) { profile = this.parseResume(c.resumeText, c.id); d.profiles.push(profile); }
@@ -149,7 +163,7 @@ export class TalentService {
   private async saveData() { if (this.data) await fs.writeFile(this.dataPath, JSON.stringify(this.data, null, 2), 'utf8'); }
 
   private projectDetail(p: TalentProject, d: TalentDataStore) { return { ...p, documents: d.projectDocuments.filter((x) => x.projectId === p.id), rules: d.projectRules.filter((x) => x.projectId === p.id), abilityDimensions: d.abilityDimensions.filter((x) => x.projectId === p.id), candidateCount: d.matches.filter((m) => m.projectId === p.id && m.recommendationRank === 1).length }; }
-  private candidateDetail(c: TalentCandidate, d: TalentDataStore) { return { ...c, profile: d.profiles.find((p) => p.candidateId === c.id) ?? null, matches: d.matches.filter((m) => m.candidateId === c.id).sort((a, b) => a.recommendationRank - b.recommendationRank), assessments: d.assessments.filter((a) => a.candidateId === c.id), reports: d.reports.filter((r) => r.candidateId === c.id) }; }
+  private candidateDetail(c: TalentCandidate, d: TalentDataStore) { return { ...c, profile: d.profiles.find((p) => p.candidateId === c.id) ?? null, matches: d.matches.filter((m) => m.candidateId === c.id).sort((a, b) => a.recommendationRank - b.recommendationRank), assessments: d.assessments.filter((a) => a.candidateId === c.id), reports: d.reports.filter((r) => r.candidateId === c.id), phase1Analyses: (d.phase1Analyses || []).filter((x) => x.candidateId === c.id) }; }
   private assessmentDetail(d: TalentDataStore, a: TalentAssessment) { return { ...a, project: d.projects.find((p) => p.id === a.projectId) ?? null, candidate: d.candidates.find((c) => c.id === a.candidateId) ?? null, questions: d.questions.filter((q) => q.assessmentId === a.id).map((q) => ({ ...q, answer: d.answers.find((ans) => ans.questionId === q.id) ?? null })) }; }
   private project(d: TalentDataStore, projectId: string) { const p = d.projects.find((x) => x.id === projectId); if (!p) throw new NotFoundException('项目不存在'); return p; }
   private candidate(d: TalentDataStore, candidateId: string) { const c = d.candidates.find((x) => x.id === candidateId); if (!c) throw new NotFoundException('候选人不存在'); return c; }
@@ -232,7 +246,7 @@ export class TalentService {
       { id: 'candidate-risk', name: '林若舟', phone: 'demo-1002', email: 'lin.demo@example.com', location: '杭州', status: 'pending_review', targetRole: 'Caption 标注质检', resumeFileUrl: null, resumeText: '林若舟，本科，浙江传媒学院广播电视编导专业，2年短视频编导和视频文字标注经验。参与项目《城市观察》担任编导助理，负责脚本、分镜和素材整理；有4个月视频大模型 Caption 与 Diff Caption 标注质检经验，能进行拉片和粗剪。希望全职，保密场地可配合，但作品链接和具体职责需要补充。', createdAt: t, updatedAt: t },
       { id: 'candidate-eliminate', name: '周明轩', phone: 'demo-1003', email: 'zhou.demo@example.com', location: '上海', status: 'eliminated', targetRole: '待判断', resumeFileUrl: null, resumeText: '周明轩，大专，视觉传达专业。主要经历为运营、主持人和演员，经常参与活动执行与直播，不具备影视创作、剪辑或标注经验。只接受兼职远程，不确定能否满足保密要求，可支持3个月。', createdAt: t, updatedAt: t },
     ];
-    const d: TalentDataStore = { projects: [rl, caption], projectDocuments: [], projectRules: rules, abilityDimensions: dims, candidates, profiles: [], matches: [], assessments: [], questions: [], answers: [], reports: [], activities: [{ id: 'act-1', type: 'demo_seed', message: '已预置 2 个项目、3 份虚拟候选人简历、动态题目和报告演示数据。', createdAt: t }] };
+    const d: TalentDataStore = { projects: [rl, caption], projectDocuments: [], projectRules: rules, abilityDimensions: dims, candidates, profiles: [], matches: [], assessments: [], questions: [], answers: [], reports: [], activities: [{ id: 'act-1', type: 'demo_seed', message: '已预置 2 个项目、3 份虚拟候选人简历、动态题目和报告演示数据。', createdAt: t }], phase1Analyses: [] };
     candidates.forEach((c) => { const profile = this.parseResume(c.resumeText, c.id); d.profiles.push(profile); const ms = d.projects.map((p) => this.matchOne(d, c, profile, p)).sort((a, b) => b.score - a.score).map((m, i) => ({ ...m, recommendationRank: i + 1 })); d.matches.push(...ms); });
     this.seedAssessment(d, candidates[0], rl); this.seedAssessment(d, candidates[1], caption);
     d.assessments.forEach((a) => { const c = d.candidates.find((x) => x.id === a.candidateId)!; const p = d.projects.find((x) => x.id === a.projectId)!; const profile = d.profiles.find((x) => x.candidateId === c.id)!; const match = d.matches.find((m) => m.candidateId === c.id && m.projectId === p.id)!; const report: TalentEvaluationReport = { id: uid('report'), candidateId: c.id, recommendedProjectId: p.id, secondProjectId: d.matches.find((m) => m.candidateId === c.id && m.projectId !== p.id)?.projectId ?? null, recommendedRole: p.recommendedRole, finalScore: Math.round(match.score * 0.55 + (a.totalScore || 0) * 0.45), resumeMatchScore: match.score, assessmentScore: a.totalScore || 0, projectRuleFit: Math.round((match.matchedRules.length / Math.max(1, match.matchedRules.length + match.missingRules.length)) * 100), talentType: this.talentType(profile), talentLevel: p.talentLevel, strengths: [...profile.verifiedEvidence.slice(0, 2), ...match.matchedRules.slice(0, 2)], weaknesses: [...profile.missingInformation.slice(0, 2), ...match.missingRules.slice(0, 2)], risks: match.risks.length ? match.risks : ['暂无明显硬性风险'], eliminationCheck: match.eliminationRules.length ? match.eliminationRules : ['未触发硬性淘汰项'], recommendation: match.eliminationRules.length ? 'eliminate' : 'enter_project', reviewerComment: '演示报告：可进入下一轮或项目试用。', aiReasoning: [match.reasoning, '演示报告由 Mock Agent 生成，可由人工复核。'], printableMarkdown: '', createdAt: now() }; report.printableMarkdown = this.markdown(report, c, p, profile, null); d.reports.push(report); });
